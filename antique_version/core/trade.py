@@ -21,7 +21,7 @@ class Trade:
 
     Attributes:
         trade_id: Unique identifier for the trade.
-        symbol: Instrument ticker (e.g. "SPY", "TSLA").
+        ticker: Instrument ticker (e.g. "SPY", "TSLA").
         direction: "long" or "short".
         entry_price: Price at which the position is opened.
         size: Number of units/contracts/shares.
@@ -32,7 +32,7 @@ class Trade:
         exit_time: Timestamp of exit.
         status: "open" or "closed".
     """
-    symbol: str
+    ticker: str
     direction: str
     entry_price: float
     size: float

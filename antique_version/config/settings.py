@@ -77,7 +77,6 @@ MARKET_PROFILES: Dict[str, dict] = {
     },
 }
 
-
 # =============================================================================
 # Universe (your 4 instruments)
 # =============================================================================
@@ -112,7 +111,6 @@ INSTRUMENTS: Dict[str, dict] = {
 }
 
 DEFAULT_UNIVERSE = list(INSTRUMENTS.keys())
-
 
 # =============================================================================
 # Yahoo Finance Intraday Constraints & Defaults
@@ -207,11 +205,9 @@ def yf_max_period_for_interval(interval: str) -> str:
     """
     return YF_INTERVAL_LIMITS.get(interval, DEFAULT_PERIOD)
 
-
 def get_universe() -> Dict[str, dict]:
     """Return the instrument dictionary (mutable copy not needed for read-only use)."""
     return INSTRUMENTS
-
 
 def market_profile_for(symbol: str) -> dict:
     """
