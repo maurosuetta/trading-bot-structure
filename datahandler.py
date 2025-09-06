@@ -1,5 +1,6 @@
 import pandas as pd
 import yfinance as yf
+import os
 
 class Datahandler:
 
@@ -11,20 +12,31 @@ class Datahandler:
 
 
     def load_data(self, source='yahoo', path=None) -> pd.DataFrame:
-        if source=="yahoo":
+        db_dir = "databases"
+        if not os.path.exists(db_dir):
+            os.makedirs(db_dir)
+
+        csv_path = os.path.join(db_dir, f"{path}.csv") if path else None
+
+        if source == "yahoo":
             print(f"Loading data for {self.asset_symbol} from {self.start_date} to {self.end_date}")
-            self.data = yf.download(tickers= self.asset_symbol, start=self.start_date, end=self.end_date)
+            self.data = yf.download(tickers=self.asset_symbol, start=self.start_date, end=self.end_date)
             if self.data.empty:
                 print("No data found for the specified asset or data range")
-        elif source == 'csv':
-            if path:
-                try:
-                    self.data = pd.read_csv(path, index_col='Date', parse_dates=True)
-                    print(f"Data loaded from {path}.")
-                except FileNotFoundError:
-                    print(f"Error: CSV file not found at {path}.")
+            if csv_path:
+                self.data.to_csv(csv_path)
+                print(f"Data saved to {csv_path}.")
             else:
-                print("Error: Path must be provided for 'csv' data source.")
+                print("Warning: No file name provided. Data not saved to CSV.")
+        elif source == 'csv':
+            if csv_path:
+                try:
+                    self.data = pd.read_csv(csv_path, index_col='Date', parse_dates=True)
+                    print(f"Data loaded from {csv_path}.")
+                except FileNotFoundError:
+                    print(f"Error: CSV file not found at {csv_path}.")
+            else:
+                print("Error: File name must be provided for 'csv' data source.")
         else:
             print("Error: Unsupported data source. Use 'yahoo' or 'csv'.")
 
