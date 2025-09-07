@@ -11,8 +11,13 @@ def main():
     #test for 1 month
     data_AAPL = Datahandler(start_date="2022-01-01", end_date="2022-02-01", asset_symbol=AAPL)
     data_AAPL.load_data(path="AAPL_testing2024")
-    sma = SMACrossoverStrategy(AAPL, 20, 50)
+    print(data_AAPL.head(10))
+    sma = SMACrossoverStrategy(AAPL, 2, 5)
     portfolio = Portfolio(100000)
-    backtest = BacktestEngine(data_AAPL, sma, )
+    backtest = BacktestEngine(data_AAPL, sma, portfolio)
+    backtest.run_backtest()
+    backtest.get_results()
+    portfolio.get_current_holdings()
+
 if __name__ == "__main__":
     main()

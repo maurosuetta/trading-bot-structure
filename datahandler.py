@@ -47,5 +47,10 @@ class Datahandler:
             return self.data.tail(n)
         return pd.DataFrame()
     
+    def head(self, n=1):
+        if not self.data.empty:
+            return self.data.head(n)
+        return pd.DataFrame()
+    
     def get_all_data(self):
         return self.data
