@@ -20,9 +20,11 @@ class Datahandler:
 
         if source == "yahoo":
             print(f"Loading data for {self.asset_symbol} from {self.start_date} to {self.end_date}")
-            self.data = yf.download(tickers=self.asset_symbol, start=self.start_date, end=self.end_date)
+            self.data = yf.download(tickers=self.asset_symbol, start=self.start_date, end=self.end_date, multi_level_index=False)
             if self.data.empty:
                 print("No data found for the specified asset or data range")
+                # self.data.columns = self.data.droplevel(1)
+            print(self.data.head())
             if csv_path:
                 self.data.to_csv(csv_path)
                 print(f"Data saved to {csv_path}.")
@@ -31,10 +33,15 @@ class Datahandler:
         elif source == 'csv':
             if csv_path:
                 try:
-                    self.data = pd.read_csv(csv_path, index_col='Date', parse_dates=True)
+                    self.data = pd.read_csv(csv_path, skiprows=2, index_col='Date', parse_dates=True)
                     print(f"Data loaded from {csv_path}.")
                 except FileNotFoundError:
                     print(f"Error: CSV file not found at {csv_path}.")
+                except pd.errors.ParserError:
+                    # If skipping rows fails, try normal loading
+                    self.data = pd.read_csv(csv_path, index_col='Date', parse_dates=True)
+                    print(f"Data loaded from {csv_path} (no skipped rows).")
+        
             else:
                 print("Error: File name must be provided for 'csv' data source.")
         else:

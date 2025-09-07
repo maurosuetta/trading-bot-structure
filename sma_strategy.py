@@ -22,9 +22,9 @@ class SMACrossoverStrategy(Strategy):
 
         # Calculate the short and long SMAs
         short_sma = data['Close'].rolling(window=self.short_window).mean()
-        print(short_sma)
+        #print(short_sma)
         long_sma = data['Close'].rolling(window=self.long_window).mean()
-        print(short_sma)
+        #print(short_sma)
         # Get the latest SMA values
         latest_short_sma = short_sma.iloc[-1]
         print("iloc:", short_sma.iloc[-1])
