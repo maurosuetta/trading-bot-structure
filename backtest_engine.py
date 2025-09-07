@@ -1,0 +1,91 @@
+import pandas as pd
+from portfolio import Portfolio
+from datahandler import DataHandler
+from strategy import Strategy, SMACrossoverStrategy
+
+class BacktestEngine:
+    """
+    Orchestrates the backtesting process by iterating through the data,
+    generating signals, and executing trades.
+    """
+    def __init__(self, data_handler: DataHandler, strategy: Strategy, portfolio: Portfolio):
+        """
+        Initializes the backtest engine with the core components.
+
+        Args:
+            data_handler (DataHandler): An instance of the DataHandler class.
+            strategy (Strategy): An instance of a Strategy subclass.
+            portfolio (Portfolio): An instance of the Portfolio class.
+        """
+        self.data_handler = data_handler
+        self.strategy = strategy
+        self.portfolio = portfolio
+        self.transactions = None
+        self.equity_curve = None
+
+    def run_backtest(self):
+        """
+        Runs the backtest simulation.
+        
+        The process involves:
+        1. Getting all historical data from the DataHandler.
+        2. Iterating through the data, one timestamp at a time.
+        3. For each timestamp, the strategy generates a signal based on the data up to that point.
+        4. The portfolio handles the signal and executes a trade if necessary.
+        5. The portfolio's equity is updated at each step.
+        """
+        print("Starting backtest...")
+        
+        # Ensure data is loaded and ready
+        all_data = self.data_handler.get_all_data()
+        if all_data.empty:
+            print("Backtest cannot run. No data loaded.")
+            return
+
+        # Iterate over each row of the data DataFrame
+
+        #AREA IMPROVEMENT MAKE A MORE EFFICIENT ITERATOR AND DATA ANALYSIS
+        for i in range(len(all_data)):
+            # Get the data available up to the current timestamp
+            current_data = all_data.iloc[:i+1]
+            current_timestamp = all_data.index[i]
+            
+            # The price for the current asset (assuming one asset for this example)
+            # This would be expanded for multiple assets.
+            current_price = all_data['Close'].iloc[i]
+            
+            # Create a dictionary of all current prices (for the Portfolio class)
+            current_prices = {self.strategy.asset_symbol: current_price}
+
+            # Generate a signal from the strategy
+            signal = self.strategy.generate_signals(current_data)
+            
+            # Handle the signal with the portfolio
+            if signal != 'HOLD':
+                self.portfolio.handle_signal(signal, current_timestamp, self.strategy.asset_symbol, current_price, current_prices)
+            else:
+                # Update equity even when not trading
+                self.portfolio.calculate_equity(current_prices)
+
+        print("Backtest finished.")
+        
+        # Get and return the final results
+        self.transactions, self.equity_curve = self.portfolio.get_results()
+
+    def get_results(self):
+        """
+        Returns the final results of the backtest.
+        """
+        if self.transactions is None or self.equity_curve is None:
+            print("Run the backtest first to get results.")
+            return None, None
+        
+        # Calculate final metrics here (e.g., total return, drawdown)
+        total_return = (self.equity_curve[-1] - self.equity_curve[0]) / self.equity_curve[0]
+        
+        print("\n--- Backtest Results ---")
+        print(f"Final Equity: ${self.equity_curve[-1]:.2f}")
+        print(f"Total Return: {total_return * 100:.2f}%")
+        print(f"Number of Trades: {len(self.transactions)}")
+        
+        return self.transactions, self.equity_curve

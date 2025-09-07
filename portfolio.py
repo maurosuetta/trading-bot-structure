@@ -13,12 +13,11 @@ class Portfolio:
         """
         self.initial_capital = initial_capital
         self.current_capital = initial_capital
-        self.positions = {}  # Dictionary to hold the quantity of each asset
-        self.transactions = []  # List to record all transaction details
-        self.equity_curve = [self.initial_capital] # List to track portfolio value over time
+        self.positions = {}  #Dictionary to hold the quantity of each asset
+        self.transactions = []  #List to record all transaction details
+        self.equity_curve = [self.initial_capital] #List to track portfolio value over time
 
-    def handle_signal(self, signal, timestamp, asset_symbol, price):
-
+    def handle_signal(self, signal, timestamp, asset_symbol, price, all_prices):
         """
         Processes a trading signal and executes the corresponding order.
 
@@ -27,10 +26,9 @@ class Portfolio:
             timestamp (datetime): The timestamp of the signal.
             asset_symbol (str): The symbol of the asset.
             price (float): The current price of the asset for the transaction.
+            all_prices (dict): A dictionary of current prices for all relevant assets.
         """
-        # A simple model: we trade a fixed quantity of the asset
-        # This can be expanded to a more complex position sizing model
-        trade_quantity = 10 
+        trade_quantity = 10 #SIMPLIFIED
 
         if signal == 'LONG':
             cost = trade_quantity * price
@@ -43,17 +41,14 @@ class Portfolio:
                 print(f"[{timestamp}] Insufficient funds to go long on {trade_quantity} units of {asset_symbol}.")
 
         elif signal == 'SHORT':
-            # In a short sale, you sell an asset you don't own. 
-            # This is represented by a negative quantity in your positions.
             revenue = trade_quantity * price
             self.current_capital += revenue
             self.positions[asset_symbol] = self.positions.get(asset_symbol, 0) - trade_quantity
             self._record_transaction(timestamp, 'SHORT', asset_symbol, trade_quantity, price)
             print(f"[{timestamp}] Executed SHORT order for {trade_quantity} units of {asset_symbol} at {price:.2f}.")
         
-        # Calculate the current equity and add to the curve
-        self.calculate_equity(price)
-
+        self.calculate_equity(all_prices)
+    
     def _record_transaction(self, timestamp, type, asset_symbol, quantity, price):
         """
         Records the details of a transaction in the transactions list.
@@ -65,7 +60,7 @@ class Portfolio:
             'asset': asset_symbol,
             'quantity': quantity,
             'price': price,
-        })
+        }) #AREA IMPROVEMENT CREATE A CLASS FOR TRANSACTION
 
     def calculate_equity(self, current_prices):
         """
@@ -74,7 +69,6 @@ class Portfolio:
         Args:
             current_prices (dict): A dictionary mapping asset symbols to their latest prices.
         """
-        # Calculate the value of open positions for each asset
         positions_value = 0
         for asset, qty in self.positions.items():
             if asset in current_prices:
