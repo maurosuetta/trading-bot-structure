@@ -15,7 +15,7 @@ class Portfolio:
         self.current_capital = initial_capital
         self.positions = {}  #Dictionary to hold the quantity of each asset
         self.transactions = []  #List to record all transaction details
-        self.equity_curve = [self.initial_capital] #List to track portfolio value over time
+        self.equity_curve = pd.Series(dtype=float) #List to track portfolio value over time
 
     def handle_signal(self, signal, timestamp, asset_symbol, price, all_prices):
         """
@@ -47,7 +47,7 @@ class Portfolio:
             self._record_transaction(timestamp, 'SHORT', asset_symbol, trade_quantity, price)
             print(f"[{timestamp}] Executed SHORT order for {trade_quantity} units of {asset_symbol} at {price:.2f}.")
         
-        self.calculate_equity(all_prices)
+        self.calculate_equity(all_prices, timestamp)
     
     def _record_transaction(self, timestamp, type, asset_symbol, quantity, price):
         """
@@ -62,7 +62,7 @@ class Portfolio:
             'price': price,
         }) #AREA IMPROVEMENT CREATE A CLASS FOR TRANSACTION
 
-    def calculate_equity(self, current_prices):
+    def calculate_equity(self, current_prices, timestamp):
         """
         Calculates the current total value of the portfolio.
 
@@ -76,7 +76,7 @@ class Portfolio:
         
         # Total equity is the sum of current capital and positions value
         current_equity = self.current_capital + positions_value
-        self.equity_curve.append(current_equity)
+        self.equity_curve.at[timestamp] = current_equity
 
     def get_current_holdings(self):
         """

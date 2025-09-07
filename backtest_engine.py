@@ -59,7 +59,7 @@ class BacktestEngine:
             if signal != 'HOLD':
                 self.portfolio.handle_signal(signal, current_timestamp, self.strategy.asset_symbol, current_price, current_prices)
             else:
-                self.portfolio.calculate_equity(current_prices)
+                self.portfolio.calculate_equity(current_prices, current_timestamp)
 
         print("Backtest finished.")
         

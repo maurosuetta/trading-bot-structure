@@ -27,24 +27,20 @@ class SMACrossoverStrategy(Strategy):
         #print(short_sma)
         # Get the latest SMA values
         latest_short_sma = short_sma.iloc[-1]
-        print("iloc:", short_sma.iloc[-1])
-        print(f"latest_short_sma = {latest_short_sma}")
+        #print("iloc:", short_sma.iloc[-1])
+        #print(f"latest_short_sma = {latest_short_sma}")
         latest_long_sma = long_sma.iloc[-1]
-        print(f"latest_long_sma = {latest_long_sma}")
+        #print(f"latest_long_sma = {latest_long_sma}")
 
-        # Get the previous SMA values for comparison
         previous_short_sma = short_sma.iloc[-2]
-        print(f"previous_short_sma = {previous_short_sma}")
+        #print(f"previous_short_sma = {previous_short_sma}")
         previous_long_sma = long_sma.iloc[-2]
-        print(f"previous_long_sma = {previous_long_sma}")
+        #print(f"previous_long_sma = {previous_long_sma}")
 
         # Check for a crossover
         if previous_short_sma <= previous_long_sma and latest_short_sma > latest_long_sma:
-            print("LONG!")
             return 'LONG'
         elif previous_short_sma >= previous_long_sma and latest_short_sma < latest_long_sma:
-            print("SHORT!")
             return 'SHORT'
         else:
-            print("hold...")
             return 'HOLD'
