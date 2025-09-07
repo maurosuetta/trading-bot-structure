@@ -34,8 +34,8 @@ class SMACrossoverStrategy(Strategy):
 
         # Check for a crossover
         if previous_short_sma <= previous_long_sma and latest_short_sma > latest_long_sma:
-            return 'BUY'
+            return 'LONG'
         elif previous_short_sma >= previous_long_sma and latest_short_sma < latest_long_sma:
-            return 'SELL'
+            return 'SHORT'
         else:
             return 'HOLD'
