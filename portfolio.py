@@ -29,7 +29,7 @@ class Portfolio:
             price (float): The current price of the asset for the transaction.
             all_prices (dict): A dictionary of current prices for all relevant assets.
         """
-        trade_quantity = 10 #SIMPLIFIED
+        trade_quantity = 100 #SIMPLIFIED
 
         if signal == 'LONG':
             cost = trade_quantity * price
