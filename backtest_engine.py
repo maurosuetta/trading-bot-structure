@@ -74,10 +74,10 @@ class BacktestEngine:
             return None, None
         
         # Calculate final metrics here (e.g., total return, drawdown)
-        total_return = (self.equity_curve[-1] - self.equity_curve[0]) / self.equity_curve[0]
+        total_return = (self.equity_curve.iloc[-1] - self.equity_curve.iloc[0]) / self.equity_curve.iloc[0]
         
         print("\n--- Backtest Results ---")
-        print(f"Final Equity: ${self.equity_curve[-1]:.2f}")
+        print(f"Final Equity: ${self.equity_curve.iloc[-1]:.2f}")
         print(f"Total Return: {total_return * 100:.2f}%")
         print(f"Number of Trades: {len(self.transactions)}")
         

@@ -20,6 +20,7 @@ def main():
     performance = PerformanceAnalyzer(portfolio=portfolio, data=data_AAPL.get_all_data())
     #print(portfolio.equity_curve)
     portfolio.get_current_holdings()
+    portfolio.get_results()
     performance.calculate_metrics()
     metrics = performance.calculate_metrics()
     for key, value in metrics.items():

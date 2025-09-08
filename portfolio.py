@@ -1,4 +1,5 @@
 import pandas as pd
+from transactions import Transaction
 
 class Portfolio:
     """
@@ -14,7 +15,7 @@ class Portfolio:
         self.initial_capital = initial_capital
         self.current_capital = initial_capital
         self.positions = {}  #Dictionary to hold the quantity of each asset
-        self.transactions = []  #List to record all transaction details
+        self.transactions = []  # List to record all transaction details
         self.equity_curve = pd.Series(dtype=float) #List to track portfolio value over time
 
     def handle_signal(self, signal, timestamp, asset_symbol, price, all_prices):
@@ -54,13 +55,14 @@ class Portfolio:
         Records the details of a transaction in the transactions list.
         This is a helper method, not meant to be called directly from outside the class.
         """
-        self.transactions.append({
-            'timestamp': timestamp,
-            'type': type,
-            'asset': asset_symbol,
-            'quantity': quantity,
-            'price': price,
-        }) #AREA IMPROVEMENT CREATE A CLASS FOR TRANSACTION
+        new_transaction = Transaction(
+            timestamp=timestamp,
+            type=type,
+            asset=asset_symbol,
+            quantity=quantity,
+            price=price)
+        
+        self.transactions.append(new_transaction) #AREA IMPROVEMENT CREATE A CLASS FOR TRANSACTION
 
     def calculate_equity(self, current_prices, timestamp):
         """
