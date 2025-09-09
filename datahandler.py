@@ -20,7 +20,13 @@ class Datahandler:
 
         if source == "yahoo":
             print(f"Loading data for {self.asset_symbol} from {self.start_date} to {self.end_date}")
-            self.data = yf.download(tickers=self.asset_symbol, start=self.start_date, end=self.end_date, multi_level_index=False)
+            self.data = yf.download(
+                tickers=self.asset_symbol,
+                start=self.start_date,
+                end=self.end_date,
+                multi_level_index=False,
+                auto_adjust=False)
+            
             if self.data.empty:
                 print("No data found for the specified asset or data range")
                 # self.data.columns = self.data.droplevel(1)
