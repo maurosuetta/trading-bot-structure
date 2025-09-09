@@ -1,5 +1,6 @@
 import pandas as pd
 from transactions import Transaction
+from trade import Trade
 
 class Portfolio:
     """
@@ -16,6 +17,7 @@ class Portfolio:
         self.current_capital = initial_capital
         self.positions = {}  #Dictionary to hold the quantity of each asset
         self.transactions = []  # List to record all transaction details
+        self.trades = []
         self.equity_curve = pd.Series(dtype=float) #List to track portfolio value over time
 
     def handle_signal(self, signal, timestamp, asset_symbol, price, all_prices):
@@ -32,37 +34,69 @@ class Portfolio:
         trade_quantity = 150 #SIMPLIFIED
 
         if signal == 'LONG':
-            cost = trade_quantity * price
+            long_trade = Trade(
+                timestamp=timestamp,
+                type='LONG',
+                asset=asset_symbol,
+                quantity=trade_quantity,
+                entry_price=price)
+            
+            cost = long_trade.cost_trade()
+
             if self.current_capital >= cost:
+                long_trade.open_trade()
+                quantity = long_trade.quantity
+
+                #register cost in current capital and update positions
                 self.current_capital -= cost
-                self.positions[asset_symbol] = self.positions.get(asset_symbol, 0) + trade_quantity
-                self._record_transaction(timestamp, 'LONG', asset_symbol, trade_quantity, price)
-                print(f"[{timestamp}] Executed LONG order for {trade_quantity} units of {asset_symbol} at {price:.2f}.")
+                self.positions[asset_symbol] = self.positions.get(asset_symbol, 0) + quantity
+
+                self._record_transaction(long_trade)
+                print(f"[{timestamp}] Executed LONG order for {quantity} units of {asset_symbol} at {price:.2f}.")
             else:
-                print(f"[{timestamp}] Insufficient funds to go long on {trade_quantity} units of {asset_symbol}.")
+                print(f"[{timestamp}] Insufficient funds to go long on {quantity} units of {asset_symbol}.")
 
         elif signal == 'SHORT':
-            revenue = trade_quantity * price
+            short_trade = Trade(
+                timestamp=timestamp,
+                type='SHORT',
+                asset=asset_symbol,
+                quantity=trade_quantity,
+                entry_price=price)
+            
+            revenue = short_trade.cost_trade()  # Assuming cost_trade returns the proceeds for SHORT
+
+            short_trade.open_trade()
+            quantity = short_trade.quantity
+
+            # Register revenue in current capital and update positions
             self.current_capital += revenue
-            self.positions[asset_symbol] = self.positions.get(asset_symbol, 0) - trade_quantity
-            self._record_transaction(timestamp, 'SHORT', asset_symbol, trade_quantity, price)
-            print(f"[{timestamp}] Executed SHORT order for {trade_quantity} units of {asset_symbol} at {price:.2f}.")
-        
+            self.positions[asset_symbol] = self.positions.get(asset_symbol, 0) - quantity
+
+            self._record_transaction(short_trade)
+            print(f"[{timestamp}] Executed SHORT order for {quantity} units of {asset_symbol} at {price:.2f}.")
         self.calculate_equity(all_prices, timestamp)
     
-    def _record_transaction(self, timestamp, type, asset_symbol, quantity, price):
+    def _record_transaction(self, trade=Trade):
         """
         Records the details of a transaction in the transactions list.
         This is a helper method, not meant to be called directly from outside the class.
         """
+        # Extract transaction details from the Trade object
+        timestamp = trade.timestamp
+        type = trade.type
+        asset_symbol = trade.asset
+        quantity = trade.quantity
+        price = trade.entry_price
+
         new_transaction = Transaction(
             timestamp=timestamp,
             type=type,
             asset=asset_symbol,
             quantity=quantity,
             price=price)
-        
-        self.transactions.append(new_transaction) #AREA IMPROVEMENT CREATE A CLASS FOR TRANSACTION
+
+        self.transactions.append(new_transaction)
 
     def calculate_equity(self, current_prices, timestamp):
         """

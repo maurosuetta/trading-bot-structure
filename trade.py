@@ -1,20 +1,26 @@
 from dataclasses import dataclass
-from portfolio import Portfolio
 
-@dataclass
+@dataclass #SEARCH IF POSSIBLE TO MAKE SOME ATTRIBUTES PRIVATE, HOWEVER, IS PYTHON...
 class Trade:
     timestamp: str
     type: str
     asset: str
     quantity: float
     entry_price: float
-    stop_loss: float
-    take_profit: float
-    is_open: bool = True
+    stop_loss: float = 0.02
+    take_profit: float = 0.04
+    is_open: bool = False
 
+    def cost_trade(self): #AREA IMPROVEMENT -> ADD COMISSION MARKET MAKER
+        return self.quantity * self.entry_price
+    
     def close_trade(self):
         self.is_open = False
     
+    def open_trade(self):
+        self.is_open = True
+    
+    #fix function
     def check_stoploss_takeprofit(self, current_prices, current_time, portfolio):
 
         for asset in current_prices:

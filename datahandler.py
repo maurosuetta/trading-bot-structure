@@ -24,8 +24,7 @@ class Datahandler:
                 tickers=self.asset_symbol,
                 start=self.start_date,
                 end=self.end_date,
-                multi_level_index=False,
-                auto_adjust=False)
+                multi_level_index=False)
             
             if self.data.empty:
                 print("No data found for the specified asset or data range")
