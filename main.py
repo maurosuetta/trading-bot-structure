@@ -9,7 +9,7 @@ from portfolio import Portfolio
 from performance_analyzer import PerformanceAnalyzer
 
 def main():
-    AAPL = "AAPL"
+    AAPL = "SPY"
     #test for 1 month
     data_AAPL = Datahandler(start_date="2022-01-01", end_date="2025-01-01", asset_symbol=AAPL)
     data_AAPL.load_data(path="AAPL_testing2024")

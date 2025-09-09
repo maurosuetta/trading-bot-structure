@@ -17,6 +17,7 @@ class Portfolio:
 
     def handle_signal(self, signal, timestamp, asset_symbol, price, all_prices):
         trade_quantity = 150 #SIMPLIFIED
+        quantity = trade_quantity  # Ensure quantity is always defined
 
         if signal == 'LONG':
             long_trade = Trade(
@@ -27,12 +28,12 @@ class Portfolio:
                 entry_price=price)
             
             cost = long_trade.cost_trade()
-
+            quantity = long_trade.quantity
+            
             if self.current_capital >= cost:
                 long_trade.open_trade()
                 self._record_transaction(long_trade)
 
-                quantity = long_trade.quantity
                 self.trades.append(long_trade)
                 #register cost in current capital and update positions
                 self.current_capital -= cost

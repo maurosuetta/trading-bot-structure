@@ -110,8 +110,10 @@ class PerformanceAnalyzer:
         # --- Plot 2: Candlestick Chart with mplfinance ---
         add_plots = []
         if not self.transactions.empty:
-            long_entries = self.transactions[self.transactions['type'] == 'LONG']
-            short_entries = self.transactions[self.transactions['type'] == 'SHORT']
+            # LONG entries: include both 'LONG' and 'TP' (Take Profit)
+            long_entries = self.transactions[self.transactions['type'].isin(['LONG', 'TP'])]
+            # SHORT entries: include both 'SHORT' and 'SL' (Stop Loss)
+            short_entries = self.transactions[self.transactions['type'].isin(['SHORT', 'SL'])]
 
             long_markers = [np.nan] * len(self.data)
             for i in range(len(self.data.index)):
@@ -127,12 +129,19 @@ class PerformanceAnalyzer:
             add_plots.append(mpf.make_addplot(short_markers, type='scatter', marker='v', markersize=100, color='red', label='SHORT Entry'))
 
         # This will open a new window for the candlestick chart
+        # Calculate exponential moving averages (EMAs)
+        self.data['EMA_4'] = self.data['Close'].ewm(span=4, adjust=False).mean()
+        self.data['EMA_10'] = self.data['Close'].ewm(span=10, adjust=False).mean()
+
+        # Add EMAs to add_plots
+        add_plots.append(mpf.make_addplot(self.data['EMA_4'], color='blue', width=1.2, label='EMA 4'))
+        add_plots.append(mpf.make_addplot(self.data['EMA_10'], color='orange', width=1.2, label='EMA 10'))
+
         mpf.plot(
             self.data,
             type='line',
-            mav=(4, 10),
             style='nightclouds',
-            title='Asset Price with Trades',
+            title='Asset Price with Trades and EMAs',
             addplot=add_plots,
             figsize=(16, 9),
             tight_layout=True,
