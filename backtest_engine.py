@@ -55,11 +55,17 @@ class BacktestEngine:
             current_prices = {self.strategy.asset_symbol: current_price}
 
             signal = self.strategy.generate_signals(current_data)
+
+            #line calling portfolio function to iterate through trades and see if TP o SL activated and close them
+            #deleting them from trades list and adding it as transaction
             
+            self.portfolio.check_TP_SL(current_prices=current_prices, timestamp=current_timestamp)
+
             if signal != 'HOLD':
                 self.portfolio.handle_signal(signal, current_timestamp, self.strategy.asset_symbol, current_price, current_prices)
             else:
                 self.portfolio.calculate_equity(current_prices, current_timestamp)
+
 
         print("Backtest finished.")
         
