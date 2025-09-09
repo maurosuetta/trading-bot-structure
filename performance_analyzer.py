@@ -130,7 +130,7 @@ class PerformanceAnalyzer:
         mpf.plot(
             self.data,
             type='line',
-            mav=(20, 50),
+            mav=(4, 10),
             style='nightclouds',
             title='Asset Price with Trades',
             addplot=add_plots,

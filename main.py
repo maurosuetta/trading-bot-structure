@@ -3,6 +3,7 @@ import pandas as pd
 from datahandler import Datahandler
 from backtest_engine import BacktestEngine
 from sma_strategy import SMACrossoverStrategy
+from ema_strategy import EMACrossoverStrategy
 from strategy import Strategy
 from portfolio import Portfolio
 from performance_analyzer import PerformanceAnalyzer
@@ -12,9 +13,10 @@ def main():
     #test for 1 month
     data_AAPL = Datahandler(start_date="2022-01-01", end_date="2025-01-01", asset_symbol=AAPL)
     data_AAPL.load_data(path="AAPL_testing2024")
-    sma = SMACrossoverStrategy(AAPL, 50, 100)
+    #sma = SMACrossoverStrategy(AAPL, 4, 10)
+    ema = EMACrossoverStrategy(AAPL, 4, 10)
     portfolio = Portfolio(100000)
-    backtest = BacktestEngine(data_AAPL, sma, portfolio)
+    backtest = BacktestEngine(data_AAPL, ema, portfolio)
     backtest.run_backtest()
     backtest.get_results()
     performance = PerformanceAnalyzer(portfolio=portfolio, data=data_AAPL.get_all_data())
