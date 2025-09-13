@@ -66,3 +66,4 @@ class Datahandler:
     
     def get_all_data(self):
         return self.data
+    

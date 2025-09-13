@@ -1,25 +1,26 @@
 import pandas as pd
 from portfolio import Portfolio
-from datahandler import Datahandler
+from Datahandler import Datahandler
 from strategy import Strategy
 from sma_strategy import SMACrossoverStrategy
+from typing import Dict
 
 class BacktestEngine:
     """
     Orchestrates the backtesting process by iterating through the data,
     generating signals, and executing trades.
     """
-    def __init__(self, data_handler: Datahandler, strategy: Strategy, portfolio: Portfolio):
+    def __init__(self, data_handler: Datahandler, strategies: Dict[str, Strategy], portfolio: Portfolio):
         """
         Initializes the backtest engine with the core components.
 
         Args:
             data_handler (DataHandler): An instance of the DataHandler class.
-            strategy (Strategy): An instance of a Strategy subclass.
+            strategies (Dict[str, Strategy]): Dictionary of strategy name to Strategy instance.
             portfolio (Portfolio): An instance of the Portfolio class.
         """
         self.data_handler = data_handler
-        self.strategy = strategy
+        self.strategies = strategies
         self.portfolio = portfolio
         self.transactions = None
         self.equity_curve = None
