@@ -1,57 +1,56 @@
-### **`DataHandler` Class**
+# Trading Bot Structure
 
-This class would handle market data. It would be responsible for loading, preprocessing, and serving historical data to the rest of the system.
+This repository provides a modular structure for building trading bots. Below is an overview of each file and directory in the project:
 
-  * **Methods:**
-      * `__init__(self, asset_symbol, start_date, end_date)`: Initializes the class with the asset symbol and start/end dates.
-      * `load_data(self, source='csv', path=None)`: Loads data from a specific source, like a CSV file, a database, or an API.
-      * `get_latest_data(self, n=1)`: Returns the last `n` data points for the asset.
-      * `get_all_data(self)`: Returns all loaded data.
-      * `preprocess_data(self)`: A method for cleaning or transforming data (e.g., handling missing data, resampling frequencies).
+## Project Structure and File Descriptions
 
------
+```
+├── strategies/
+│   └── Contains trading strategy modules. Each file here defines a specific algorithm or logic for trading decisions.
+├── data/
+│   └── Handles data sources and management. Includes scripts for fetching, processing, and storing market data.
+├── execution/
+│   └── Responsible for order execution logic. Modules here interact with exchanges to place, modify, or cancel trades.
+├── config.yaml
+│   └── Configuration file for the bot. Set exchange credentials, strategy parameters, and risk management options here.
+├── main.py
+│   └── The entry point of the bot. Loads configuration, initializes modules, and starts the trading loop.
+└── README.md
+  └── Project documentation and usage instructions.
+```
 
-### **`Strategy` Class**
+## Features
 
-This is the base class for all trading strategies. Each specific strategy should inherit from this class and define its own logic.
+- Modular architecture for strategy, data, and execution
+- Easy integration with multiple exchanges
+- Configurable risk management
+- Logging and monitoring support
 
-  * **Methods:**
-      * `__init__(self, asset_symbol)`: Initializes the class with the asset symbol.
-      * `generate_signals(self, data)`: This is the key method. It must be implemented by each strategy. It receives data and returns a trading signal (e.g., 'BUY', 'SELL', 'HOLD').
-      * `set_parameters(self, **params)`: Allows for setting parameters for the strategy (e.g., moving average lengths, thresholds).
+## Getting Started
 
------
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/trading-bot-structure.git
+   cd trading-bot-structure
+   ```
 
-### **`Portfolio` Class**
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-This class would manage the capital, positions, and transactions of the backtest.
+3. **Configure your bot**
+   - Edit `config.yaml` to set up exchange credentials, strategies, and risk parameters.
 
-  * **Methods:**
-      * `__init__(self, initial_capital)`: Initializes the portfolio with starting capital.
-      * `handle_signal(self, signal, data)`: Processes a trading signal and executes an order (buy, sell).
-      * `calculate_equity(self, current_price)`: Calculates the current value of the portfolio (capital + value of open positions).
-      * `record_transaction(self, signal, price)`: Records a transaction and updates the capital.
-      * `get_current_holdings(self)`: Returns the current position.
+4. **Run the bot**
+   ```bash
+   python main.py
+   ```
 
------
+## Contributing
 
-### **`BacktestEngine` Class**
+Contributions are welcome! Please open issues or submit pull requests for improvements.
 
-This is the main class that orchestrates the entire backtesting process.
+## License
 
-  * **Methods:**
-      * `__init__(self, data_handler, strategy, portfolio)`: Initializes the engine with instances of the other classes.
-      * `run_backtest(self)`: This method would iterate through the data, call the strategy to generate signals, and call the portfolio to execute transactions.
-      * `run_simulation(self)`: Runs the backtest in a temporal loop.
-      * `get_results(self)`: Returns the performance metrics of the backtest (e.g., total return, drawdown, Sharpe ratio).
-
------
-
-### **`PerformanceAnalyzer` Class**
-
-This class would calculate and visualize performance metrics.
-
-  * **Methods:**
-      * `__init__(self, portfolio)`: Initializes with the portfolio instance that contains the transaction data.
-      * `calculate_metrics(self)`: Calculates metrics like total return, maximum drawdown, volatility, and Sharpe ratio.
-      * `plot_results(self)`: Generates charts to visualize portfolio performance.
+This project is licensed under the MIT License.
